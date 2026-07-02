@@ -1,0 +1,268 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site } from '../site.config';
+
+const education = [
+  {
+    title: 'École Polytechnique',
+    location: 'Palaiseau, France',
+    period: 'Sep. 2023 -- Present',
+    subtitle: 'Curriculum focused on AI and applied mathematics.',
+    points: [
+      'Relevant modules: Deep Learning, Machine Learning fundamentals, Multimodal Generative AI, GNNs, Markov chains, algorithms, data visualization, business economics.',
+    ],
+  },
+  {
+    title: 'INP-HB',
+    location: "Yamoussoukro, Côte d'Ivoire",
+    period: 'Sep. 2021 -- Jul. 2023',
+    subtitle: 'MP/MPSI preparatory classes',
+    points: ['Core subjects: mathematics, computer science, physics, chemistry, mechanics.'],
+  },
+];
+
+const experience = [
+  {
+    role: 'Research Intern',
+    org: 'Université Lyon 2',
+    location: 'Lyon, France',
+    period: 'May 2026 - Present',
+    points: [
+      'Multi-scale data representation: studying the links between wavelets and signatures to build compact and informative representations of functional data for machine learning.',
+      'Theoretical and numerical analysis: evaluating how the choice of wavelet basis, decomposition depth, and signature truncation level affect numerical stability, computational cost, and representation quality.',
+    ],
+  },
+  {
+    role: 'Data Science Intern',
+    org: 'SUEZ Digital Solutions',
+    location: 'Île-de-France, France',
+    period: 'Jun. 2025 - Sep. 2025',
+    points: [
+      'Improved an internal data validation tool: optimized anomaly detection algorithms for time series, added new features, and increased system robustness.',
+      'Developed a fault detection model (Wessex project): designed a machine learning model for detecting abnormal behavior in time series to support proactive maintenance.',
+    ],
+  },
+  {
+    role: 'Research Project',
+    org: 'École Polytechnique / Institut Pasteur',
+    location: 'Palaiseau, France',
+    period: 'Sep. 2024 -- Apr. 2025',
+    points: [
+      'Machine Learning and Artificial Intelligence: improved established trajectory generation methods by identifying key variables so generated trajectories became indistinguishable from real ones.',
+      'Developed a classifier for trajectory categorization: analyzed and classified larval trajectories with a custom action classifier, targeting 80% accuracy to gain insight into biological neural network behavior.',
+    ],
+  },
+];
+
+const projects = [
+  {
+    title: 'AI project with the X computer science lab',
+    description:
+      'Studied and compared graph learning models (GNNs, Graph Transformers) for detecting and explaining temporal anomalies.',
+  },
+  {
+    title: 'Developed an intelligent chat site using an API',
+    description:
+      'Designed and implemented an interactive discussion platform using AI to provide dynamic and relevant responses with React and API calls.',
+  },
+  {
+    title: 'Video game project',
+    description:
+      'Collaborated in a team of 3 to create a 2D video game in 2 months using Unity and C#, tested by several game industry professionals, including Ubisoft.',
+  },
+];
+
+const awards = [
+  {
+    title: 'Academic excellence',
+    description:
+      '2023 National Excellence Award for Best Ivorian Student, awarded by the President of Ivory Coast.',
+  },
+  {
+    title: 'OPAM',
+    description: 'Bronze medalist at the 2021 Pan-African Mathematics Olympiad (OPAM).',
+  },
+  {
+    title: 'Machine Learning and Data Science certificates',
+    description:
+      'Completed training in Scikit-learn, Pandas, and data manipulation. Practical experience in developing machine learning models.',
+  },
+];
+
+const skillGroups = [
+  {
+    label: 'Programming languages',
+    items: ['Python', 'Java', 'C#'],
+  },
+  {
+    label: 'Libraries',
+    items: ['Pandas', 'Polars', 'TensorFlow', 'Scikit-learn', 'PyTorch'],
+  },
+  {
+    label: 'Tools',
+    items: ['Git', 'SQL', 'GitHub', 'Unity'],
+  },
+  {
+    label: 'Languages',
+    items: ['French: native', 'English: advanced C1', 'Arabic: elementary A1'],
+  },
+];
+
+const downloads = [
+  {
+    label: 'French version',
+    href: site.cvPdfFr,
+    accent: 'FR',
+  },
+  {
+    label: 'English version',
+    href: site.cvPdfEn,
+    accent: 'EN',
+  },
+];
+---
+
+<BaseLayout title="CV" description={`Curriculum vitae of ${site.name}.`} wide={true}>
+  <header class="mb-10 rounded-3xl border border-zinc-200/80 bg-white/80 p-6 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/60 sm:p-8">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <p class="font-mono text-xs uppercase tracking-[0.3em] text-zinc-500 dark:text-zinc-400">
+          Curriculum vitae
+        </p>
+        <h1 class="mt-3 text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100 sm:text-5xl">
+          Zié Aziz BERTHE
+        </h1>
+        <p class="mt-3 max-w-3xl text-base leading-relaxed text-zinc-600 dark:text-zinc-400">
+          Student at École Polytechnique, specializing in AI and applied mathematics, with experience
+          in research, data science, and time-series modeling.
+        </p>
+        <div class="mt-4 flex flex-wrap gap-3 text-sm text-zinc-600 dark:text-zinc-400">
+          <a class="transition hover:text-zinc-900 dark:hover:text-zinc-100" href={`mailto:${site.social.email}`}>
+            {site.social.email}
+          </a>
+          <span aria-hidden="true" class="text-zinc-400 dark:text-zinc-600">·</span>
+          <a
+            class="transition hover:text-zinc-900 dark:hover:text-zinc-100"
+            href={site.social.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            linkedin.com/in/aziz-berthé
+          </a>
+        </div>
+      </div>
+      <div class="flex flex-col gap-3 sm:min-w-72">
+        <div class="grid gap-3 sm:grid-cols-2">
+          {downloads.map((download) => (
+            <a
+              href={download.href}
+              download
+              class="inline-flex items-center justify-center gap-2 rounded-full border border-zinc-300 bg-white px-4 py-3 text-sm font-medium text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-100 dark:hover:border-zinc-500 dark:hover:bg-zinc-900"
+            >
+              <span class="font-mono text-xs tracking-[0.2em] text-zinc-500 dark:text-zinc-400">
+                {download.accent}
+              </span>
+              {download.label}
+            </a>
+          ))}
+        </div>
+        <p class="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+          The French CV is available now. Add the English PDF at {site.cvPdfEn} to enable the English download.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <section class="mb-10">
+    <h2 class="mb-4 text-sm font-semibold tracking-[0.25em] text-zinc-500 uppercase dark:text-zinc-400">
+      Education
+    </h2>
+    <div class="space-y-4">
+      {education.map((item) => (
+        <article class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/60">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{item.title}</h3>
+              <p class="text-sm text-zinc-600 dark:text-zinc-400">{item.location}</p>
+            </div>
+            <span class="font-mono text-xs text-zinc-400 dark:text-zinc-500">{item.period}</span>
+          </div>
+          <p class="mt-3 text-sm italic text-zinc-700 dark:text-zinc-300">{item.subtitle}</p>
+          <ul class="mt-3 list-disc space-y-1 pl-5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+            {item.points.map((point) => <li>{point}</li>)}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="mb-10">
+    <h2 class="mb-4 text-sm font-semibold tracking-[0.25em] text-zinc-500 uppercase dark:text-zinc-400">
+      Experience
+    </h2>
+    <div class="space-y-4">
+      {experience.map((job) => (
+        <article class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/60">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h3 class="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{job.role}</h3>
+              <p class="text-sm text-zinc-600 dark:text-zinc-400">
+                {job.org} · {job.location}
+              </p>
+            </div>
+            <span class="font-mono text-xs text-zinc-400 dark:text-zinc-500">{job.period}</span>
+          </div>
+          <ul class="mt-3 list-disc space-y-2 pl-5 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+            {job.points.map((point) => <li>{point}</li>)}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="mb-10">
+    <h2 class="mb-4 text-sm font-semibold tracking-[0.25em] text-zinc-500 uppercase dark:text-zinc-400">
+      Projects
+    </h2>
+    <div class="grid gap-4 lg:grid-cols-3">
+      {projects.map((project) => (
+        <article class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/60">
+          <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">{project.title}</h3>
+          <p class="mt-3 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{project.description}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="mb-10">
+    <h2 class="mb-4 text-sm font-semibold tracking-[0.25em] text-zinc-500 uppercase dark:text-zinc-400">
+      Certifications and Awards
+    </h2>
+    <div class="space-y-3">
+      {awards.map((award) => (
+        <article class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/60">
+          <h3 class="font-semibold text-zinc-900 dark:text-zinc-100">{award.title}</h3>
+          <p class="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">{award.description}</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <h2 class="mb-4 text-sm font-semibold tracking-[0.25em] text-zinc-500 uppercase dark:text-zinc-400">
+      Skills
+    </h2>
+    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      {skillGroups.map((group) => (
+        <article class="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950/60">
+          <h3 class="text-sm font-semibold uppercase tracking-wide text-zinc-900 dark:text-zinc-100">
+            {group.label}
+          </h3>
+          <ul class="mt-3 space-y-2 text-sm text-zinc-600 dark:text-zinc-400">
+            {group.items.map((item) => <li>{item}</li>)}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="7" fill="#09090b" />
+  <!-- a small "learned curve" mark -->
+  <path d="M5 22 C 10 22, 11 9, 16 9 S 22 22, 27 12"
+        fill="none" stroke="#2dd4bf" stroke-width="2.5" stroke-linecap="round" />
+  <circle cx="9" cy="18" r="1.6" fill="#e4e4e7" />
+  <circle cx="16" cy="9" r="1.6" fill="#e4e4e7" />
+  <circle cx="23" cy="15" r="1.6" fill="#e4e4e7" />
+</svg>

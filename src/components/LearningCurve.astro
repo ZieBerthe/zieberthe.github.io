@@ -1,0 +1,21 @@
+---
+// Signature hero animation: a single continuous curve, fit once to a
+// scattered stream of points, that pans sideways forever.
+// The heavy lifting lives in ../scripts/learning-curve.ts.
+---
+
+<canvas
+  id="learning-curve"
+  class="block h-64 w-full sm:h-80"
+  role="img"
+  aria-label="An ambient animation of a curve fitted to scattered data points via gradient descent, continuously panning sideways."
+></canvas>
+
+<script>
+  import { mountLearningCurve } from '../scripts/learning-curve';
+
+  const canvas = document.getElementById('learning-curve') as HTMLCanvasElement | null;
+  if (canvas) {
+    mountLearningCurve(canvas);
+  }
+</script>

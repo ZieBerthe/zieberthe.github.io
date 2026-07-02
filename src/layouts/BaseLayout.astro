@@ -1,0 +1,72 @@
+---
+import '../styles/global.css';
+import { site } from '../site.config';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Override the social-share image for this page. */
+  image?: string;
+  /** Restrict the content width. Defaults to the standard reading column. */
+  wide?: boolean;
+}
+
+const {
+  title,
+  description = site.intro,
+  image = site.ogImage,
+  wide = false,
+} = Astro.props;
+
+const pageTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.role}`;
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const ogImageUrl = new URL(image, site.url).href;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={site.name} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:site_name" content={site.name} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    <!-- Apply the saved theme before paint to avoid a flash of the wrong theme. -->
+    <script is:inline>
+      (() => {
+        const stored = localStorage.getItem('theme');
+        const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+        const useDark = stored ? stored === 'dark' : !prefersLight;
+        document.documentElement.classList.toggle('dark', useDark);
+      })();
+    </script>
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <Nav />
+    <main class={`mx-auto w-full flex-1 px-5 py-12 ${wide ? 'max-w-5xl' : 'max-w-3xl'}`}>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

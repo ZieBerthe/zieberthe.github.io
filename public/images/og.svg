@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#09090b" />
+  <path d="M80 460 C 260 460, 300 210, 520 210 S 820 470, 1120 250"
+        fill="none" stroke="#2dd4bf" stroke-width="6" stroke-linecap="round" opacity="0.9" />
+  <circle cx="230" cy="360" r="9" fill="#e4e4e7" />
+  <circle cx="430" cy="250" r="9" fill="#e4e4e7" />
+  <circle cx="640" cy="300" r="9" fill="#e4e4e7" />
+  <circle cx="880" cy="360" r="9" fill="#e4e4e7" />
+  <text x="80" y="150" font-family="Segoe UI, Arial, sans-serif" font-size="72" font-weight="700" fill="#fafafa">Zié Berthé</text>
+  <text x="80" y="215" font-family="Segoe UI, Arial, sans-serif" font-size="36" fill="#2dd4bf">Machine Learning Engineer</text>
+</svg>

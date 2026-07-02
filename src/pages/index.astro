@@ -1,0 +1,112 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LearningCurve from '../components/LearningCurve.astro';
+import SkillsRow from '../components/SkillsRow.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import PostCard from '../components/PostCard.astro';
+import { site } from '../site.config';
+import { projects } from '../data/projects';
+
+const featured = projects.filter((p) => p.featured).slice(0, 3);
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+---
+
+<BaseLayout>
+  <!-- Hero -->
+  <section class="mb-14">
+    <p class="font-mono text-sm text-accent-strong dark:text-accent">Hi, I'm {site.name} 👋</p>
+    <h1 class="mt-3 text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl dark:text-zinc-100">
+      {site.role}
+    </h1>
+    <p class="mt-5 max-w-2xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
+      {site.intro}
+    </p>
+
+    <div class="mt-8">
+      <LearningCurve />
+    </div>
+
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a
+        href="/projects"
+        class="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+      >
+        View projects
+      </a>
+      <div class="flex flex-wrap gap-3">
+        <a
+          href={site.cvPdfFr}
+          class="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-accent hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-100"
+        >
+          Download CV FR
+        </a>
+        <a
+          href={site.cvPdfEn}
+          class="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-accent hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-100"
+        >
+          Download CV EN
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills -->
+  <section class="mb-14">
+    <h2 class="mb-4 text-sm font-semibold tracking-wide text-zinc-500 uppercase dark:text-zinc-400">
+      Tools &amp; skills
+    </h2>
+    <SkillsRow />
+  </section>
+
+  <!-- Featured projects -->
+  <section class="mb-14">
+    <div class="mb-6 flex items-baseline justify-between">
+      <h2 class="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+        Featured projects
+      </h2>
+      <a
+        href="/projects"
+        class="text-sm text-zinc-500 transition hover:text-accent-strong dark:text-zinc-400 dark:hover:text-accent"
+      >
+        All projects →
+      </a>
+    </div>
+    <div class="grid gap-5 sm:grid-cols-2">
+      {featured.map((project) => <ProjectCard project={project} />)}
+    </div>
+  </section>
+
+  <!-- Recent writing -->
+  {
+    posts.length > 0 && (
+      <section>
+        <div class="mb-2 flex items-baseline justify-between">
+          <h2 class="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">
+            Recent writing
+          </h2>
+          <a
+            href="/blog"
+            class="text-sm text-zinc-500 transition hover:text-accent-strong dark:text-zinc-400 dark:hover:text-accent"
+          >
+            All posts →
+          </a>
+        </div>
+        <div>
+          {posts.map((post) => (
+            <PostCard
+              href={`/blog/${post.id}`}
+              title={post.data.title}
+              description={post.data.description}
+              date={post.data.date}
+              tags={post.data.tags}
+            />
+          ))}
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>
