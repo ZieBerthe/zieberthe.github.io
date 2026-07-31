@@ -5,10 +5,7 @@ date: 2026-07-02
 tags: ['machine-learning', 'intuition']
 ---
 
-If you've seen the animation on my homepage, you've watched a small model *learn*
-a function in real time: a smooth curve slowly bending to fit scattered points.
-Here's the intuition behind it.
-
+Have you ever been in a situation where you want to fit a machine learning model on a time seirie with multi dimension without knowing what to do? One of the first thing that comes to the mind is maybe sampling them. But this comes with a lot of questions, like what can the sample rate be? Also from a regularly ( or even irregularly sampled) points, you have an infinite number of functions that can pass throught these points at the same exact sampled timestamps. 
 ## Points, and a curve that wants to fit them
 
 We start with some data points. Each is a pair `(x, y)`. Our goal is to find a
