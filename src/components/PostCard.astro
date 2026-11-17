@@ -5,8 +5,9 @@ interface Props {
   description: string;
   date: Date;
   tags?: string[];
+  pdf?: boolean;
 }
-const { href, title, description, date, tags = [] } = Astro.props;
+const { href, title, description, date, tags = [], pdf = false } = Astro.props;
 const dateStr = date.toLocaleDateString('en-US', {
   year: 'numeric',
   month: 'short',
@@ -22,6 +23,13 @@ const iso = date.toISOString();
         class="text-lg font-semibold text-zinc-900 transition group-hover:text-accent-strong dark:text-zinc-100 dark:group-hover:text-accent"
       >
         {title}
+        {
+          pdf && (
+            <span class="ml-2 rounded bg-accent/15 px-1.5 py-0.5 align-middle font-mono text-[10px] font-medium text-accent-strong dark:text-accent">
+              PDF
+            </span>
+          )
+        }
       </h3>
       <time datetime={iso} class="shrink-0 font-mono text-xs text-zinc-400 dark:text-zinc-500">
         {dateStr}

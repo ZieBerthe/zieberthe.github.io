@@ -1,5 +1,6 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import PdfViewer from '../components/PdfViewer.astro';
 
 interface Props {
   title: string;
@@ -7,8 +8,9 @@ interface Props {
   date: Date;
   updated?: Date;
   tags?: string[];
+  pdf?: string;
 }
-const { title, description, date, updated, tags = [] } = Astro.props;
+const { title, description, date, updated, tags = [], pdf } = Astro.props;
 
 const fmt = (d: Date) =>
   d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -17,10 +19,10 @@ const fmt = (d: Date) =>
 <BaseLayout title={title} description={description}>
   <article>
     <a
-      href="/blog"
+      href="/posts"
       class="inline-flex items-center gap-1 text-sm text-zinc-500 transition hover:text-accent-strong dark:text-zinc-400 dark:hover:text-accent"
     >
-      ← Back to blog
+      ← Back to posts
     </a>
 
     <header class="mt-6 border-b border-zinc-200/70 pb-6 dark:border-zinc-800/70">
@@ -43,5 +45,7 @@ const fmt = (d: Date) =>
     <div class="prose mt-8">
       <slot />
     </div>
+
+    {pdf && <PdfViewer src={pdf} />}
   </article>
 </BaseLayout>

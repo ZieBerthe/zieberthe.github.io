@@ -33,7 +33,7 @@ export const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/cv', label: 'CV' },
   { href: '/projects', label: 'Projects' },
-  { href: '/blog', label: 'Blog' },
+  { href: '/posts', label: 'Posts' },
 ];
 
 /** Skills / tools shown as a row on the home page. */

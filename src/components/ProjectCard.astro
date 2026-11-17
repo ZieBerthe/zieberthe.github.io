@@ -5,22 +5,29 @@ interface Props {
   project: Project;
 }
 const { project } = Astro.props;
-const { title, description, tags, href, repo, image } = project;
+const { slug, title, description, tags, repoUrl, report, poster, image, stars } = project;
+const page = `/projects/${slug}`;
+const link =
+  'text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100';
 ---
 
 <article
   class="group flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white transition hover:border-accent/60 hover:shadow-sm dark:border-zinc-800 dark:bg-zinc-900/50 dark:hover:border-accent/60"
 >
-  {
-    image ? (
-      <img src={image} alt={title} class="aspect-[16/9] w-full object-cover" loading="lazy" />
-    ) : (
-      <div class="aspect-[16/9] w-full bg-gradient-to-br from-accent/20 via-transparent to-accent/10" />
-    )
-  }
+  <a href={page} tabindex="-1" aria-hidden="true">
+    {
+      image ? (
+        <img src={image} alt="" class="aspect-[16/9] w-full object-cover" loading="lazy" />
+      ) : (
+        <div class="aspect-[16/9] w-full bg-gradient-to-br from-accent/20 via-transparent to-accent/10" />
+      )
+    }
+  </a>
 
   <div class="flex flex-1 flex-col p-5">
-    <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">{title}</h3>
+    <h3 class="text-base font-semibold text-zinc-900 dark:text-zinc-100">
+      <a href={page} class="hover:text-accent-strong dark:hover:text-accent">{title}</a>
+    </h3>
     <p class="mt-2 flex-1 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
       {description}
     </p>
@@ -35,31 +42,20 @@ const { title, description, tags, href, repo, image } = project;
       }
     </ul>
 
-    <div class="mt-4 flex items-center gap-4 text-sm">
+    <div class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+      <a href={page} class="font-medium text-accent-strong hover:underline dark:text-accent">
+        Details →
+      </a>
       {
-        href && (
-          <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="font-medium text-accent-strong hover:underline dark:text-accent"
-          >
-            Live ↗
-          </a>
-        )
-      }
-      {
-        repo && (
-          <a
-            href={repo}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-          >
+        repoUrl && (
+          <a href={repoUrl} target="_blank" rel="noopener noreferrer" class={link}>
             Code ↗
           </a>
         )
       }
+      {report && <a href={report} class={link}>Report</a>}
+      {poster && <a href={poster} class={link}>Poster</a>}
+      {stars ? <span class="ml-auto text-xs text-zinc-400">★ {stars}</span> : null}
     </div>
   </div>
 </article>

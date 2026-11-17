@@ -1,6 +1,6 @@
 # zieberthe.github.io
 
-My personal portfolio — profile, CV, projects, and a blog. Built with
+My personal portfolio — profile, CV, projects, and posts. Built with
 [Astro](https://astro.build) + [Tailwind CSS](https://tailwindcss.com) and deployed to
 GitHub Pages. Live at **https://zieberthe.github.io**.
 
@@ -27,13 +27,31 @@ Requires Node.js 18+.
 | Accent color, fonts, article styling | `src/styles/global.css` (`--color-accent`) |
 | CV content (experience, education) | `src/pages/cv.astro` |
 | Downloadable CV PDF | replace `public/cv/zie-berthe-cv.pdf` |
-| Projects | `src/data/projects.ts` |
+| Projects (list of GitHub repos + PDFs) | `src/data/projects.ts` |
 | Avatar / social-share image | `public/images/` (swap `og.svg` for a 1200×630 PNG) |
 | Hero animation behaviour | `src/scripts/learning-curve.ts` |
 
-## Add a blog post
+## Add a project
 
-Create a Markdown file in `src/content/blog/`, e.g. `my-post.md`:
+1. (Optional) Put the report and/or poster PDF in `public/projects/`.
+2. Add an entry to `entries` in `src/data/projects.ts`:
+
+```ts
+{
+  repo: 'zieberthe/my-project',               // GitHub repo
+  report: '/projects/my-project-report.pdf',  // optional
+  poster: '/projects/my-project-poster.pdf',  // optional
+  featured: true,                             // optional: show on the Home page
+}
+```
+
+Title, description, tags and the README are pulled from GitHub when the site is built
+(write `title`, `description` or `tags` yourself to override them). The project gets its own
+page at `/projects/my-project` with the README, a GitHub link and the PDFs.
+
+## Add a post
+
+Create a Markdown file in `src/content/posts/`, e.g. `my-post.md`:
 
 ```markdown
 ---
@@ -47,8 +65,12 @@ draft: false
 Your content here…
 ```
 
-The post appears automatically at `/blog/my-post`. Set `draft: true` to hide it from the
+The post appears automatically at `/posts/my-post`. Set `draft: true` to hide it from the
 production build.
+
+**PDF posts** (e.g. an article written in LaTeX): put the PDF in `public/posts/` and add
+`pdf: '/posts/my-article.pdf'` to the frontmatter. The page shows any Markdown text you write,
+then the PDF with open/download buttons.
 
 ## Deployment
 

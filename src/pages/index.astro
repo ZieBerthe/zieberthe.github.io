@@ -10,7 +10,7 @@ import { projects } from '../data/projects';
 
 const featured = projects.filter((p) => p.featured).slice(0, 3);
 
-const posts = (await getCollection('blog', ({ data }) => !data.draft))
+const posts = (await getCollection('posts', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 3);
 ---
@@ -89,7 +89,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
             Recent writing
           </h2>
           <a
-            href="/blog"
+            href="/posts"
             class="text-sm text-zinc-500 transition hover:text-accent-strong dark:text-zinc-400 dark:hover:text-accent"
           >
             All posts →
@@ -98,11 +98,12 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
         <div>
           {posts.map((post) => (
             <PostCard
-              href={`/blog/${post.id}`}
+              href={`/posts/${post.id}`}
               title={post.data.title}
               description={post.data.description}
               date={post.data.date}
               tags={post.data.tags}
+              pdf={!!post.data.pdf}
             />
           ))}
         </div>

@@ -80,3 +80,17 @@ body {
 .prose td {
   @apply border-b border-zinc-200 px-3 py-2 dark:border-zinc-800;
 }
+.prose h1 {
+  @apply mt-10 mb-4 text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100;
+}
+.prose pre {
+  @apply bg-zinc-100 dark:bg-zinc-900;
+}
+
+/* GitHub-rendered README HTML (project pages). */
+.readme .octicon {
+  display: none; /* keep .anchor (it carries the heading id) but hide its icon */
+}
+.readme .markdown-heading:first-child h1 {
+  @apply mt-2;
+}
