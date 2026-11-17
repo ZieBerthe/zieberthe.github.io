@@ -33,21 +33,21 @@ Requires Node.js 18+.
 
 ## Add a project
 
-1. (Optional) Put the report and/or poster PDF in `public/projects/`.
-2. Add an entry to `entries` in `src/data/projects.ts`:
+Add an entry to `entries` in `src/data/projects.ts`:
 
 ```ts
-{
-  repo: 'zieberthe/my-project',               // GitHub repo
-  report: '/projects/my-project-report.pdf',  // optional
-  poster: '/projects/my-project-poster.pdf',  // optional
-  featured: true,                             // optional: show on the Home page
-}
+{ repo: 'ZieBerthe/my-project', featured: true }   // featured = also shown on Home
 ```
 
 Title, description, tags and the README are pulled from GitHub when the site is built
 (write `title`, `description` or `tags` yourself to override them). The project gets its own
-page at `/projects/my-project` with the README, a GitHub link and the PDFs.
+page at `/projects/my-project`. If the repo has no "About" description, the README's first
+paragraph is used.
+
+**Report / poster PDFs:** each project has a folder in `public/projects/` named after its page
+URL (e.g. `public/projects/lipreader/`). Drop the PDF in and push — a filename containing
+`poster` is shown as the poster, any other PDF as the report. For a new project, create its
+folder yourself; the build warns if a folder name doesn't match any project.
 
 ## Add a post
 
@@ -74,8 +74,15 @@ then the PDF with open/download buttons.
 
 ## Deployment
 
-Pushing to `main` triggers the workflow in `.github/workflows/deploy.yml`, which builds the
-site and publishes it to GitHub Pages.
+The workflow in `.github/workflows/deploy.yml` builds the site and publishes it to GitHub
+Pages. It runs:
+
+- on every push to `main`;
+- once a day (05:00 UTC), so README edits in project repos show up within 24 h;
+- on demand: **Actions → Deploy to GitHub Pages → Run workflow**.
+
+GitHub pauses scheduled runs after 60 days without a push to this repo (it emails you).
+The site stays online; push anything or click **Enable workflow** in the Actions tab to resume.
 
 **One-time setup:** in the repository, go to **Settings → Pages → Build and deployment** and
 set **Source** to **GitHub Actions**.

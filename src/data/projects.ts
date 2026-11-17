@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import path from 'node:path';
 import { getRepo, getReadmeHtml } from '../lib/github';
 
 /**
@@ -7,8 +9,10 @@ import { getRepo, getReadmeHtml } from '../lib/github';
  * Title, description, tags and README are filled in from GitHub at build time;
  * any field you write here overrides the GitHub value.
  *
- * Report / poster PDFs: put the file in `public/projects/` and reference it
- * as '/projects/<file>.pdf'.
+ * Report / poster PDFs: drop them into the project's folder,
+ * `public/projects/<slug>/` (slug = the end of the project page URL, e.g. `lipreader`).
+ * A PDF whose filename contains "poster" becomes the poster; any other PDF the report.
+ * No code change needed.
  */
 export interface ProjectEntry {
   /** GitHub repo as "owner/name". Optional for projects not on GitHub. */
@@ -53,12 +57,12 @@ const entries: ProjectEntry[] = [
     href: 'https://zieberthe.github.io',
     featured: true,
   },
-  // {
-  //   repo: 'zieberthe/my-project',
-  //   report: '/projects/my-project-report.pdf',
-  //   poster: '/projects/my-project-poster.pdf',
-  //   featured: true,
-  // },
+  { repo: 'ZieBerthe/LipReader', featured: true },
+  { repo: 'ZieBerthe/SigBERT_MIMIC', featured: true },
+  { repo: 'ZieBerthe/P3gproject' },
+  { repo: 'ZieBerthe/Nba-teams-visualization' },
+  { repo: 'ZieBerthe/my-chatbot-mistralapi' },
+  { repo: 'ZieBerthe/finger-counter-opencv' },
 ];
 
 const prettify = (name: string) =>
@@ -67,24 +71,64 @@ const prettify = (name: string) =>
 const slugify = (s: string) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
+const PDF_ROOT = path.join(process.cwd(), 'public', 'projects');
+
+/** Finds report/poster PDFs in public/projects/<slug>/. */
+function findPdfs(slug: string): { report?: string; poster?: string } {
+  const dir = path.join(PDF_ROOT, slug);
+  if (!fs.existsSync(dir)) return {};
+  const pdfs = fs.readdirSync(dir).filter((f) => f.toLowerCase().endsWith('.pdf')).sort();
+  const url = (f: string) => `/projects/${slug}/${encodeURIComponent(f)}`;
+  const posters = pdfs.filter((f) => /poster/i.test(f));
+  const reports = pdfs.filter((f) => !/poster/i.test(f));
+  if (reports.length > 1)
+    console.warn(`[projects] ${slug}: several report PDFs, using "${reports[0]}"`);
+  if (posters.length > 1)
+    console.warn(`[projects] ${slug}: several poster PDFs, using "${posters[0]}"`);
+  return {
+    report: reports[0] && url(reports[0]),
+    poster: posters[0] && url(posters[0]),
+  };
+}
+
+/** First README paragraph as plain text, for repos with no "About" description. */
+function firstParagraph(html: string | null): string {
+  if (!html) return '';
+  for (const [, inner] of html.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/gi)) {
+    const text = inner
+      .replace(/<[^>]+>/g, '')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (text.length >= 20) return text.length > 160 ? text.slice(0, 157).trimEnd() + '…' : text;
+  }
+  return '';
+}
+
 async function load(entry: ProjectEntry): Promise<Project> {
   const info = entry.repo ? await getRepo(entry.repo) : null;
   const readmeHtml =
     entry.repo && info ? await getReadmeHtml(entry.repo, info.default_branch) : null;
   const repoName = entry.repo?.split('/')[1];
   const title = entry.title ?? prettify(info?.name ?? repoName ?? 'Untitled');
+  const slug = slugify(repoName ?? title);
+  const pdfs = findPdfs(slug);
 
   return {
-    slug: slugify(repoName ?? title),
+    slug,
     title,
-    description: entry.description ?? info?.description ?? '',
+    description: entry.description || info?.description || firstParagraph(readmeHtml),
     tags:
       entry.tags ??
       (info?.topics.length ? info.topics : info?.language ? [info.language] : []),
     href: entry.href ?? (info?.homepage || undefined),
     repoUrl: info?.html_url ?? (entry.repo ? `https://github.com/${entry.repo}` : undefined),
-    report: entry.report,
-    poster: entry.poster,
+    report: entry.report ?? pdfs.report,
+    poster: entry.poster ?? pdfs.poster,
     image: entry.image,
     featured: entry.featured,
     stars: info?.stargazers_count,
@@ -93,3 +137,12 @@ async function load(entry: ProjectEntry): Promise<Project> {
 }
 
 export const projects: Project[] = await Promise.all(entries.map(load));
+
+// Warn about PDF folders that don't belong to any project (e.g. a typo in the name).
+if (fs.existsSync(PDF_ROOT)) {
+  const slugs = new Set(projects.map((p) => p.slug));
+  for (const d of fs.readdirSync(PDF_ROOT, { withFileTypes: true })) {
+    if (d.isDirectory() && !slugs.has(d.name))
+      console.warn(`[projects] public/projects/${d.name}/ doesn't match any project — check the folder name`);
+  }
+}

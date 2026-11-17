@@ -3,7 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-  workflow_dispatch:
+  workflow_dispatch: # "Run workflow" button in the Actions tab
+  schedule:
+    - cron: '0 5 * * *' # daily rebuild (05:00 UTC) to pick up project README changes
 
 permissions:
   contents: read
