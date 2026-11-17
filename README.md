@@ -49,6 +49,11 @@ URL (e.g. `public/projects/lipreader/`). Drop the PDF in and push — a filename
 `poster` is shown as the poster, any other PDF as the report. For a new project, create its
 folder yourself; the build warns if a folder name doesn't match any project.
 
+**Card image:** put an image in the same folder (`cover.png`, `.jpg`, `.webp`, `.gif` or
+`.svg`) and push. It replaces the blank at the top of the card and is shown as a banner on the
+project page. If there are several images, the one named `cover` is used. Wide 16:9 images
+(e.g. 1280×720, under ~500 KB) look best.
+
 ## Add a post
 
 Create a Markdown file in `src/content/posts/`, e.g. `my-post.md`:

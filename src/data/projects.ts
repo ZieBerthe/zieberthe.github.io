@@ -12,6 +12,7 @@ import { getRepo, getReadmeHtml } from '../lib/github';
  * Report / poster PDFs: drop them into the project's folder,
  * `public/projects/<slug>/` (slug = the end of the project page URL, e.g. `lipreader`).
  * A PDF whose filename contains "poster" becomes the poster; any other PDF the report.
+ * An image (cover.png/jpg/webp/…) becomes the card picture and the project page banner.
  * No code change needed.
  */
 export interface ProjectEntry {
@@ -26,7 +27,7 @@ export interface ProjectEntry {
   report?: string;
   /** Poster PDF, e.g. '/projects/my-poster.pdf'. */
   poster?: string;
-  /** Screenshot in /public/images. A gradient is shown if omitted. */
+  /** Card image. Normally auto-detected from the project folder; a gradient is shown if none. */
   image?: string;
   /** Featured projects appear on the Home page. */
   featured?: boolean;
@@ -73,21 +74,33 @@ const slugify = (s: string) =>
 
 const PDF_ROOT = path.join(process.cwd(), 'public', 'projects');
 
-/** Finds report/poster PDFs in public/projects/<slug>/. */
-function findPdfs(slug: string): { report?: string; poster?: string } {
+const IMAGE_EXT = /\.(png|jpe?g|webp|gif|svg)$/i;
+
+/** Finds report/poster PDFs and a card image in public/projects/<slug>/. */
+function findFiles(slug: string): { report?: string; poster?: string; image?: string } {
   const dir = path.join(PDF_ROOT, slug);
   if (!fs.existsSync(dir)) return {};
-  const pdfs = fs.readdirSync(dir).filter((f) => f.toLowerCase().endsWith('.pdf')).sort();
+  const files = fs.readdirSync(dir).sort();
   const url = (f: string) => `/projects/${slug}/${encodeURIComponent(f)}`;
+
+  const pdfs = files.filter((f) => f.toLowerCase().endsWith('.pdf'));
   const posters = pdfs.filter((f) => /poster/i.test(f));
   const reports = pdfs.filter((f) => !/poster/i.test(f));
   if (reports.length > 1)
     console.warn(`[projects] ${slug}: several report PDFs, using "${reports[0]}"`);
   if (posters.length > 1)
     console.warn(`[projects] ${slug}: several poster PDFs, using "${posters[0]}"`);
+
+  const images = files.filter((f) => IMAGE_EXT.test(f));
+  const cover = images.find((f) => /^cover\./i.test(f));
+  if (!cover && images.length > 1)
+    console.warn(`[projects] ${slug}: several images, using "${images[0]}" (name one "cover" to choose)`);
+  const image = cover ?? images[0];
+
   return {
     report: reports[0] && url(reports[0]),
     poster: posters[0] && url(posters[0]),
+    image: image && url(image),
   };
 }
 
@@ -116,7 +129,7 @@ async function load(entry: ProjectEntry): Promise<Project> {
   const repoName = entry.repo?.split('/')[1];
   const title = entry.title ?? prettify(info?.name ?? repoName ?? 'Untitled');
   const slug = slugify(repoName ?? title);
-  const pdfs = findPdfs(slug);
+  const files = findFiles(slug);
 
   return {
     slug,
@@ -127,9 +140,9 @@ async function load(entry: ProjectEntry): Promise<Project> {
       (info?.topics.length ? info.topics : info?.language ? [info.language] : []),
     href: entry.href ?? (info?.homepage || undefined),
     repoUrl: info?.html_url ?? (entry.repo ? `https://github.com/${entry.repo}` : undefined),
-    report: entry.report ?? pdfs.report,
-    poster: entry.poster ?? pdfs.poster,
-    image: entry.image,
+    report: entry.report ?? files.report,
+    poster: entry.poster ?? files.poster,
+    image: entry.image ?? files.image,
     featured: entry.featured,
     stars: info?.stargazers_count,
     readmeHtml: readmeHtml ?? undefined,

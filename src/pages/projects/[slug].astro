@@ -11,7 +11,7 @@ export const getStaticPaths = (() =>
   }))) satisfies GetStaticPaths;
 
 const { project } = Astro.props as { project: Project };
-const { title, description, tags, href, repoUrl, report, poster, readmeHtml } = project;
+const { title, description, tags, href, repoUrl, report, poster, image, readmeHtml } = project;
 const btn =
   'rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:border-accent hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-100';
 ---
@@ -56,6 +56,16 @@ const btn =
         }
       </div>
     </header>
+
+    {
+      image && (
+        <img
+          src={image}
+          alt={title}
+          class="mt-8 max-h-[360px] w-full rounded-xl border border-zinc-200 object-cover dark:border-zinc-800"
+        />
+      )
+    }
 
     {
       report && (
