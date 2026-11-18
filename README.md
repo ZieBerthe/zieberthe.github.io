@@ -49,6 +49,10 @@ URL (e.g. `public/projects/lipreader/`). Drop the PDF in and push — a filename
 `poster` is shown as the poster, any other PDF as the report. For a new project, create its
 folder yourself; the build warns if a folder name doesn't match any project.
 
+**Or keep the PDF in the project's GitHub repo:** a file named `report.pdf` (or `poster.pdf`),
+in any folder of the repo, is found and used automatically — nothing to copy. A PDF placed in
+`public/projects/<project>/` takes priority over it.
+
 **Card image:** put an image in the same folder (`cover.png`, `.jpg`, `.webp`, `.gif` or
 `.svg`) and push. It replaces the blank at the top of the card and is shown as a banner on the
 project page. If there are several images, the one named `cover` is used. Wide 16:9 images

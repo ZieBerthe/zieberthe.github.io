@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { getRepo, getReadmeHtml } from '../lib/github';
+import { getRepo, getReadmeHtml, findRepoFiles, downloadRepoFile } from '../lib/github';
 
 /**
  * Projects shown on the Home page (featured) and the Projects page (all).
@@ -13,6 +13,9 @@ import { getRepo, getReadmeHtml } from '../lib/github';
  * `public/projects/<slug>/` (slug = the end of the project page URL, e.g. `lipreader`).
  * A PDF whose filename contains "poster" becomes the poster; any other PDF the report.
  * An image (cover.png/jpg/webp/…) becomes the card picture and the project page banner.
+ *
+ * A `report.pdf` / `poster.pdf` committed anywhere in the project's GitHub repo is also picked
+ * up automatically (downloaded at build time). A PDF in the project folder overrides it.
  * No code change needed.
  */
 export interface ProjectEntry {
@@ -122,6 +125,37 @@ function firstParagraph(html: string | null): string {
   return '';
 }
 
+/**
+ * PDFs downloaded from GitHub repos at build time, keyed "<slug>/<file>".
+ * Served by src/pages/projects/[slug]/[file].ts.
+ */
+export const repoPdfs = new Map<string, ArrayBuffer>();
+
+/** Looks for report.pdf / poster.pdf in the repo and downloads the ones still missing. */
+async function repoPdfsFor(
+  repo: string,
+  branch: string,
+  slug: string,
+  need: { report: boolean; poster: boolean }
+): Promise<{ report?: string; poster?: string }> {
+  const kinds = (['report', 'poster'] as const).filter((k) => need[k]);
+  if (kinds.length === 0) return {};
+  const found = await findRepoFiles(repo, branch, kinds.map((k) => `${k}.pdf`));
+  const out: { report?: string; poster?: string } = {};
+  for (const kind of kinds) {
+    const filePath = found[`${kind}.pdf`];
+    if (!filePath) continue;
+    const bytes = await downloadRepoFile(repo, branch, filePath);
+    if (!bytes) continue;
+    const file = `github-${kind}.pdf`;
+    repoPdfs.set(`${slug}/${file}`, bytes);
+    out[kind] = `/projects/${slug}/${file}`;
+    const mb = (bytes.byteLength / 1024 / 1024).toFixed(1);
+    console.log(`[projects] ${slug}: using ${filePath} from GitHub as ${kind} (${mb} MB)`);
+  }
+  return out;
+}
+
 async function load(entry: ProjectEntry): Promise<Project> {
   const info = entry.repo ? await getRepo(entry.repo) : null;
   const readmeHtml =
@@ -130,6 +164,15 @@ async function load(entry: ProjectEntry): Promise<Project> {
   const title = entry.title ?? prettify(info?.name ?? repoName ?? 'Untitled');
   const slug = slugify(repoName ?? title);
   const files = findFiles(slug);
+  const report = entry.report ?? files.report;
+  const poster = entry.poster ?? files.poster;
+  const fromRepo =
+    entry.repo && info
+      ? await repoPdfsFor(entry.repo, info.default_branch, slug, {
+          report: !report,
+          poster: !poster,
+        })
+      : {};
 
   return {
     slug,
@@ -140,8 +183,8 @@ async function load(entry: ProjectEntry): Promise<Project> {
       (info?.topics.length ? info.topics : info?.language ? [info.language] : []),
     href: entry.href ?? (info?.homepage || undefined),
     repoUrl: info?.html_url ?? (entry.repo ? `https://github.com/${entry.repo}` : undefined),
-    report: entry.report ?? files.report,
-    poster: entry.poster ?? files.poster,
+    report: report ?? fromRepo.report,
+    poster: poster ?? fromRepo.poster,
     image: entry.image ?? files.image,
     featured: entry.featured,
     stars: info?.stargazers_count,

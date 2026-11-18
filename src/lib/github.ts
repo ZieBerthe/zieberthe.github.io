@@ -77,3 +77,54 @@ function fixLinks(html: string, repo: string, branch: string): string {
       .replace(/\sid="user-content-/g, ' id="')
   );
 }
+
+/**
+ * For each wanted filename (case-insensitive), the path of a matching file anywhere in the
+ * repo, preferring the shallowest match. One API call for all names.
+ */
+export async function findRepoFiles(
+  repo: string,
+  branch: string,
+  names: string[]
+): Promise<Record<string, string | undefined>> {
+  const found: Record<string, string | undefined> = {};
+  try {
+    const res = await fetch(
+      `${API}/repos/${repo}/git/trees/${encodeURIComponent(branch)}?recursive=1`,
+      { headers: headers() }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const { tree } = (await res.json()) as { tree: { path: string; type: string }[] };
+    const blobs = tree
+      .filter((t) => t.type === 'blob')
+      .map((t) => t.path)
+      .sort((a, b) => a.split('/').length - b.split('/').length);
+    for (const name of names) {
+      const target = name.toLowerCase();
+      found[name] = blobs.find((p) => p.split('/').pop()!.toLowerCase() === target);
+    }
+  } catch (err) {
+    console.warn(`[github] could not list files of ${repo}: ${err}`);
+  }
+  return found;
+}
+
+/** Raw bytes of a file in the repo, or null. */
+export async function downloadRepoFile(
+  repo: string,
+  branch: string,
+  filePath: string
+): Promise<ArrayBuffer | null> {
+  try {
+    const url = `https://raw.githubusercontent.com/${repo}/${branch}/${filePath
+      .split('/')
+      .map(encodeURIComponent)
+      .join('/')}`;
+    const res = await fetch(url, { headers: { 'User-Agent': 'portfolio-site-build' } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.arrayBuffer();
+  } catch (err) {
+    console.warn(`[github] could not download ${repo}/${filePath}: ${err}`);
+    return null;
+  }
+}
