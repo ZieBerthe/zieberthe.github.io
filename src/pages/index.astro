@@ -8,7 +8,6 @@ import PostCard from '../components/PostCard.astro';
 import { site } from '../site.config';
 import { projects } from '../data/projects';
 
-const featured = projects.filter((p) => p.featured).slice(0, 3);
 
 const posts = (await getCollection('posts', ({ data }) => !data.draft))
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
@@ -76,7 +75,7 @@ const posts = (await getCollection('posts', ({ data }) => !data.draft))
       </a>
     </div>
     <div class="grid gap-5 sm:grid-cols-2">
-      {featured.map((project) => <ProjectCard project={project} />)}
+      {projects.map((project) => <ProjectCard project={project} />)}
     </div>
   </section>
 

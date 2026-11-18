@@ -36,7 +36,7 @@ Requires Node.js 18+.
 Add an entry to `entries` in `src/data/projects.ts`:
 
 ```ts
-{ repo: 'ZieBerthe/my-project', featured: true }   // featured = also shown on Home
+{ repo: 'ZieBerthe/my-project' }   // shown on both the Home and Projects pages
 ```
 
 Title, description, tags and the README are pulled from GitHub when the site is built

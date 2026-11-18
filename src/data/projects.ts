@@ -3,7 +3,7 @@ import path from 'node:path';
 import { getRepo, getReadmeHtml, findRepoFiles, downloadRepoFile } from '../lib/github';
 
 /**
- * Projects shown on the Home page (featured) and the Projects page (all).
+ * Projects shown on the Home page and the Projects page.
  *
  * To add a GitHub project, add an entry with its `repo` ("owner/name").
  * Title, description, tags and README are filled in from GitHub at build time;
@@ -32,8 +32,6 @@ export interface ProjectEntry {
   poster?: string;
   /** Card image. Normally auto-detected from the project folder; a gradient is shown if none. */
   image?: string;
-  /** Featured projects appear on the Home page. */
-  featured?: boolean;
 }
 
 export interface Project {
@@ -47,22 +45,13 @@ export interface Project {
   report?: string;
   poster?: string;
   image?: string;
-  featured?: boolean;
   stars?: number;
   readmeHtml?: string;
 }
 
 const entries: ProjectEntry[] = [
-  {
-    repo: 'zieberthe/zieberthe.github.io',
-    title: 'This Portfolio',
-    description: 'The site you are looking at.',
-    tags: ['Astro', 'TypeScript', 'Tailwind CSS'],
-    href: 'https://zieberthe.github.io',
-    featured: true,
-  },
-  { repo: 'ZieBerthe/LipReader', featured: true },
-  { repo: 'ZieBerthe/SigBERT_MIMIC', featured: true },
+  { repo: 'ZieBerthe/LipReader' },
+  { repo: 'ZieBerthe/SigBERT_MIMIC' },
   { repo: 'ZieBerthe/P3gproject' },
   { repo: 'ZieBerthe/Nba-teams-visualization' },
   { repo: 'ZieBerthe/my-chatbot-mistralapi' },
@@ -186,7 +175,6 @@ async function load(entry: ProjectEntry): Promise<Project> {
     report: report ?? fromRepo.report,
     poster: poster ?? fromRepo.poster,
     image: entry.image ?? files.image,
-    featured: entry.featured,
     stars: info?.stargazers_count,
     readmeHtml: readmeHtml ?? undefined,
   };
